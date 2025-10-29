@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title> Misión Industria 4.0 — Roles y Desafíos (5/5)</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+:root{
+  --primary:#00ffcc; --secondary:#ffdf6c; --danger:#ff6b6b; --bg1:#0f0c29; --bg2:#302b63;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:'Roboto',sans-serif;
+  background:linear-gradient(135deg,var(--bg1),var(--bg2),#24243e);
+  color:#fff; min-height:100vh; overflow-x:hidden;
+}
+.container{max-width:980px;margin:0 auto;padding:28px;position:relative;z-index:3}
+h1{font-family:'Orbitron',sans-serif;color:var(--primary);font-size:2.4rem;text-shadow:0 0 12px var(--primary)}
+h2{color:var(--secondary)}
+button{
+  background:linear-gradient(45deg,var(--primary),#00ccaa);
+  color:#000;border:none;padding:10px 18px;border-radius:10px;font-weight:700;cursor:pointer;margin:8px;
+  box-shadow:0 8px 20px rgba(0,255,204,0.12);transition:all .18s ease
+}
+button:active{transform:translateY(1px)}
+.hidden{display:none}
+.role-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-top:18px}
+@media(max-width:720px){.role-grid{grid-template-columns:1fr}}
+.role-card{
+  background:rgba(255,255,255,0.06);padding:16px;border-radius:12px;border:1px solid rgba(255,255,255,0.04);
+  transition:transform .2s ease; text-align:left;
+}
+.role-card:hover{transform:translateY(-6px)}
+.role-card h3{margin:8px 0;font-size:1.05rem}
+.role-card p{opacity:0.95}
+.role-btn{display:inline-block;margin-top:10px}
+.status-bar{display:flex;justify-content:space-between;gap:12px;background:rgba(0,0,0,0.3);padding:12px;border-radius:10px;margin-bottom:14px}
+.challenge-image{width:100%;max-height:260px;object-fit:cover;border-radius:12px;margin:12px 0;border:2px solid var(--primary)}
+.challenge-option{background:rgba(255,255,255,0.03);padding:12px;border-radius:10px;margin:10px 0;cursor:pointer;border:1px solid transparent;text-align:left}
+.challenge-option:hover{transform:translateX(6px);background:rgba(255,255,255,0.06);border-color:rgba(0,255,204,0.08)}
+.feedback-box{padding:14px;border-radius:10px;margin-top:12px}
+.feedback-correct{background:rgba(0,255,204,0.08);border:1px solid rgba(0,255,204,0.18);color:var(--primary)}
+.feedback-incorrect{background:rgba(255,107,107,0.06);border:1px solid rgba(255,107,107,0.14);color:var(--danger)}
+.summary-list{list-style:none;text-align:left;padding:0;margin:18px 0}
+.summary-list li{padding:10px;border-radius:8px;margin-bottom:10px;background:rgba(255,255,255,0.03)}
+.music-toggle{position:fixed;right:18px;bottom:18px;background:rgba(0,0,0,0.45);padding:12px;border-radius:50%;z-index:50;cursor:pointer}
+.particles{position:fixed;inset:0;pointer-events:none;z-index:0}
+.particle{position:absolute;border-radius:50%;opacity:0.45;animation:float 6s infinite ease-in-out}
+@keyframes float {0%,100%{transform:translateY(0);opacity:0.35}50%{transform:translateY(-18px);opacity:0.8}}
+</style>
+</head>
+<body>
+  <div class="particles" id="particles"></div>
+
+  <audio id="bgMusic" loop>
+    <source src="https://assets.mixkit.co/sfx/preview/mixkit-tech-house-vibes-301.mp3" type="audio/mpeg">
+  </audio>
+  <audio id="successSound"><source src="https://assets.mixkit.co/sfx/preview/mixkit-achievement-bell-600.mp3" type="audio/mpeg"></audio>
+  <audio id="errorSound"><source src="https://assets.mixkit.co/sfx/preview/mixkit-wrong-answer-fail-notification-383.mp3" type="audio/mpeg"></audio>
+  <audio id="clickSound"><source src="https://assets.mixkit.co/sfx/preview/mixkit-select-click-1239.mp3" type="audio/mpeg"></audio>
+
+  <div class="music-toggle" id="musicToggle" onclick="toggleMusic()" title="Activar / Desactivar música">
+    <i class="fas fa-volume-mute" id="musicIcon"></i>
+  </div>
+
+  <div class="container">
+    <div id="intro">
+      <h1> Misión Industria 4.0</h1>
+      <p>Eres parte del <strong>Comité de Optimización 4.0</strong>. Selecciona un rol y responde los 5 desafíos correspondientes a tu especialidad. Tienes <strong>3 vidas</strong>.</p>
+      <button onclick="startToRoles()"> Seleccionar Rol</button>
+    </div>
+
+    <div id="roles" class="hidden">
+      <h2>Elige tu Rol Estratégico</h2>
+      <p>Tu rol determinará los 5 desafíos que enfrentarás.</p>
+
+      <div class="role-grid" aria-hidden="false">
+        <div class="role-card" role="button" aria-label="Sensores e IoT">
+          <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 1 0 14.14"/></svg>
+          <h3> Sensores e IoT</h3>
+          <p>Visión y telemetría: detectan condiciones en tiempo real.</p>
+          <button class="role-btn" onclick="selectRole('iot')">Seleccionar Sensores</button>
+        </div>
+
+        <div class="role-card" role="button" aria-label="Analistas de Datos">
+          <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          <h3> Analistas de Datos</h3>
+          <p>Transforman Big Data en conocimiento accionable.</p>
+          <button class="role-btn" onclick="selectRole('data')">Seleccionar Analista</button>
+        </div>
+
+        <div class="role-card" role="button" aria-label="Inteligencia Artificial">
+          <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 17l6-4-6-4v8z"/></svg>
+          <h3> Inteligencia Artificial</h3>
+          <p>Predicción, optimización y acciones autónomas.</p>
+          <button class="role-btn" onclick="selectRole('ai')">Seleccionar IA</button>
+        </div>
+
+        <div class="role-card" role="button" aria-label="Ciberseguridad">
+          <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M12 15v.01"/></svg>
+          <h3> Ciberseguridad</h3>
+          <p>Protección de redes OT, PLCs y datos industriales.</p>
+          <button class="role-btn" onclick="selectRole('cyber')">Seleccionar Seguridad</button>
+        </div>
+      </div>
+      <div style="margin-top:14px;"><button onclick="backToIntro()"> Volver</button></div>
+    </div>
+
+    <div id="challenges" class="hidden" aria-live="polite">
+      <div class="status-bar">
+        <div id="roleDisplay">Rol: —</div>
+        <div id="livesDisplay">Vidas: </div>
+        <div id="progressDisplay">Desafío: 0/5</div>
+      </div>
+
+      <h2 id="challengeTitle">Título</h2>
+      <img id="challengeImage" class="challenge-image" src="" alt="">
+      <p id="challengeText"></p>
+      <div id="optionsContainer" aria-label="Opciones"></div>
+
+      <div id="feedback" class="feedback-box hidden" role="status">
+        <p id="feedbackText"></p>
+        <div style="text-align:right;margin-top:10px">
+          <button id="nextBtn" onclick="nextChallenge()">Siguiente →</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="summaryScreen" class="hidden">
+      <h2 id="summaryTitle"></h2>
+      <div id="summaryExplanation" style="margin:14px 0; text-align:left"></div>
+
+      <h3>Detalle por desafío</h3>
+      <ul id="summaryList" class="summary-list"></ul>
+
+      <div style="margin-top:18px;">
+        <button onclick="restartAll()"> Jugar de nuevo</button>
+        <button onclick="goToRoles()"> Cambiar rol</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+/* ========================= Partículas ========================= */
+(function createParticles(){
+  const container = document.getElementById('particles');
+  if (!container) return; 
+  while (container.firstChild) {
+    container.removeChild(container.firstChild);
+  }
+  for(let i=0;i<28;i++){
+    const p = document.createElement('div');
+    p.className = 'particle';
+    const size = Math.random()*6 + 2;
+    p.style.width = p.style.height = size + 'px';
+    p.style.left = Math.random()*100 + '%';
+    p.style.top = Math.random()*100 + '%';
+    p.style.background = 'rgba(0,255,204,'+(Math.random()*0.35+0.12)+')';
+    p.style.animationDelay = (Math.random()*6)+'s';
+    p.style.animationDuration = (Math.random()*6+4)+'s';
+    container.appendChild(p);
+  }
+})();
+
+/* ========================= Audio ========================= */
+const bgMusic = document.getElementById('bgMusic');
+const successSound = document.getElementById('successSound');
+const errorSound = document.getElementById('errorSound');
+const clickSound = document.getElementById('clickSound');
+let musicPlaying = false;
+function toggleMusic(){
+  const icon = document.getElementById('musicIcon');
+  if(musicPlaying){ bgMusic.pause(); icon.className='fas fa-volume-mute'; }
+  else { bgMusic.volume = 0.28; bgMusic.play().catch(()=>{}); icon.className='fas fa-volume-up'; }
+  musicPlaying = !musicPlaying;
+}
+function playSound(s){
+  try{ s.currentTime = 0; s.volume = 0.6; s.play(); } catch(e){}
+}
+
+/* ========================= Desafíos (20) ========================= */
+const allChallenges = [
+  // === ROL: IoT (5 Desafíos) ===
+  {
+    id:1, role:'iot',
+    title:'Desafío 1: Sensor Fallido (IoT)',
+    image:'https://images.unsplash.com/photo-1581093458791-9d6c1ebfda56?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+    text:'Un sensor en la Máquina Z envía datos incompletos. ¿Cómo garantizas la calidad del Big Data?',
+    options:[
+      { text:'Instalar un Gemelo Digital (Digital Twin) para simular y validar datos.', correct:true, reason:'El Gemelo Digital permite validar y completar datos en tiempo real antes de alimentar modelos.'},
+      { text:'Promediar los datos faltantes para completar series.', correct:false, reason:'Promediar oculta anomalías y puede inducir a errores en predicción.'},
+      { text:'Aislar el sensor y dejar de enviar datos.', correct:false, reason:'Pierdes visibilidad crítica y la trazabilidad del proceso.'},
+      { text:'Detener la máquina de inmediato hasta reparar.', correct:false, reason:'Medida costosa que puede evitarse con validación y mitigación.'}
+    ]
+  },
+  {
+    id:2, role:'iot',
+    title:'Desafío 2: Protocolo de Datos (IoT)',
+    image:'https://images.unsplash.com/photo-1543286386-7132863da6d6?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+    text:'Debes enviar telemetría (temperatura, vibración) de 10,000 sensores a la nube. El consumo de batería es crítico. ¿Qué protocolo usas?',
+    options:[
+      { text:'MQTT, por ser ligero y eficiente en publicador-suscriptor.', correct:true, reason:'MQTT está diseñado para IoT, es ligero y minimiza el uso de red y batería.'},
+      { text:'HTTP/REST, por ser el estándar web universal.', correct:false, reason:'HTTP es "pesado", requiere más ancho de banda y batería por cada mensaje.'},
+      { text:'FTP, para transferir los logs de datos en lotes.', correct:false, reason:'FTP no es un protocolo de mensajería en tiempo real y es ineficiente para datos pequeños.'},
+      { text:'Email (SMTP), para enviar una alerta por cada sensor.', correct:false, reason:'Es una solución absurda, no es escalable ni eficiente para telemetría.'}
+    ]
+  },
+  {
+    id:3, role:'iot',
+    title:'Desafío 3: Edge vs. Cloud (IoT)',
+    image:'https://images.unsplash.com/photo-1517436081-1_c0e6f8b2e3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+    text:'Un brazo robótico necesita una respuesta de IA en menos de 10 milisegundos para no chocar. El data center tiene 150ms de latencia. ¿Dónde ejecutas el modelo?',
+    options:[
+      { text:'En un dispositivo "Edge" (local) junto al robot.', correct:true, reason:'El Edge Computing permite procesamiento de latencia ultra-baja, cumpliendo el requisito de 10ms.'},
+      { text:'En la Nube (Cloud), que tiene más potencia de cómputo.', correct:false, reason:'La potencia no sirve si la latencia (150ms) es demasiado alta y causa un accidente.'},
+      { text:'En el smartphone del operador, que está cerca.', correct:false, reason:'No es una solución industrial robusta ni confiable para control en tiempo real.'},
+      { text:'Entrenar un modelo más pequeño para que corra más rápido en la nube.', correct:false, reason:'Reducir el modelo no reducirá la latencia de la red, que es el problema principal.'}
+    ]
+  },
+  {
+    id:4, role:'iot',
+    title:'Desafío 4: Conectividad de Red (IoT)',
+    image:'https://images.unsplash.com/photo-1528256338314-c11a2872afa3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+    text:'Debes instalar sensores en un campo agrícola de 10 km², sin WiFi ni electricidad. ¿Qué tecnología de red es la más adecuada?',
+    options:[
+      { text:'LoRaWAN o Sigfox, redes de bajo consumo y largo alcance (LPWAN).', correct:true, reason:'Las redes LPWAN están diseñadas para esto: largo alcance (km) y bajo consumo (años de batería).'},
+      { text:'Instalar repetidores WiFi en todo el campo.', correct:false, reason:'WiFi tiene corto alcance y alto consumo; sería logísticamente imposible y caro.'},
+      { text:'Usar 5G, por su alta velocidad.', correct:false, reason:'5G es rápido pero consume mucha energía y la cobertura puede no existir en el campo.'},
+      { text:'Tender cables de Ethernet a cada sensor.', correct:false, reason:'Cablear 10 km² es económicamente inviable y no práctico.'}
+    ]
+  },
+  {
+    id:5, role:'iot',
+    title:'Desafío 5: Calibración de Sensores (IoT)',
+    image:'https://images.unsplash.com/photo-1581091224030-22c0c062084f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+    text:'Un sensor de presión crítico muestra valores "estables" pero erróneos (deriva de calibración). La IA no lo detecta. ¿Qué haces?',
+    options:[
+      { text:'Implementar un Gemelo Digital que compare el valor del sensor con un modelo físico esperado.', correct:true, reason:'El Gemelo Digital puede detectar esta "deriva" comparando la lectura real con una simulación física.'},
+      { text:'Confiar en la IA, ya que aprenderá del nuevo rango de valores.', correct:false, reason:'La IA aprenderá un patrón incorrecto, llevando a decisiones peligrosas.'},
+      { text:'Reemplazar el sensor cada día para estar seguros.', correct:false, reason:'Esto es Mantenimiento Preventivo costoso, no predictivo ni inteligente.'},
+      { text:'Ignorar el sensor y usar solo los datos de vibración.', correct:false, reason:'Eliminar una fuente de datos crítica debilita el modelo predictivo.'}
+    ]
+  },
+  
+  // === ROL: Data (5 Desafíos) ===
+  {
+    id:6, role:'data',
+    title:'Desafío 1: Big Data Desorganizado (Datos)',
+    image:'https://images.unsplash.com/photo-1551288048-b1c6d4d4d2b0?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+    text:'Terabytes de datos sin procesar (JSON, logs, CSV) llegan al Data Lake. ¿Cuál es la acción prioritaria para hacerlos útiles?',
+    options:[
+      { text:'Ejecutar un proceso ETL/ELT para Limpiar, Normalizar y Estructurar los datos.', correct:true, reason:'Los datos "crudos" no sirven. El proceso ETL (Extraer, Transformar, Cargar) es esencial.'},
+      { text:'Comprar más discos duros (Storage), el espacio es lo primero.', correct:false, reason:'Almacenar basura solo crea un "pantano de datos" (Data Swamp).'},
+      { text:'Conectar una herramienta de BI (Tableau/Power BI) directo al Data Lake.', correct:false, reason:'Las herramientas de BI funcionan mejor con datos estructurados; fallarán con datos crudos.'},
+      { text:'Borrar los datos con más de 24 horas para mantener el sistema rápido.', correct:false, reason:'Los datos históricos son vitales para entrenar modelos de IA y encontrar patrones.'}
+    ]
+  },
+  {
+    id:7, role:'data',
+    title:'Desafío 2: Defecto Externo (Datos)',
+    image:'https://images.unsplash.com/photo-1581093588401-fbb62a9ddbe1?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+    text:'El proveedor envía lote con defecto intermitente. ¿Qué solución 4.0 (basada en datos) implementas?',
+    options:[
+      { text:'Integración Horizontal: Compartir datos de calidad (IoT) con el proveedor en tiempo real.', correct:true, reason:'Permite detección temprana y corrección colaborativa en la cadena de valor.'},
+      { text:'Inspección manual del 100% de los lotes.', correct:false, reason:'Demorado, costoso y no es una solución digital ni escalable.'},
+      { text:'Instalar visión artificial local, sin comunicarlo al proveedor.', correct:false, reason:'Solución parcial. Detecta el problema, pero no lo previene en la fuente.'},
+      { text:'Desechar el lote y cambiar de proveedor inmediatamente.', correct:false, reason:'Es una reacción drástica que no soluciona el problema de raíz con datos.'}
+    ]
+  },
+  {
+    id:8, role:'data',
+    title:'Desafío 3: Pipeline de Datos Roto (Datos)',
+    image:'https://images.unsplash.com/photo-1591799264618-741cfa5958f3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+    text:'El proceso ETL nocturno falló. El dashboard de producción de la mañana no tiene datos de las últimas 8 horas. ¿Cuál es la prioridad?',
+    options:[
+      { text:'Reprocesar el pipeline fallido y comunicar la demora y el impacto a los gerentes.', correct:true, reason:'La prioridad es restaurar la integridad de los datos y gestionar las expectativas.'},
+      { text:'Introducir los datos manualmente para que el dashboard se vea bien.', correct:false, reason:'Introduce riesgo de error humano y no es una solución escalable ni correcta.'},
+      { text:'Usar los datos de ayer, asumiendo que la producción fue similar.', correct:false, reason:'Usar datos obsoletos para tomar decisiones hoy es extremadamente peligroso.'},
+      { text:'Culpar al equipo de IoT por enviar datos en formato incorrecto.', correct:false, reason:'Buscar culpables no resuelve el problema inmediato de falta de datos.'}
+    ]
+  },
+  {
+    id:9, role:'data',
+    title:'Desafío 4: Visualización de Datos (Datos)',
+    image:'https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+    text:'El gerente quiere "entender por qué la Máquina 3 falla más". ¿Qué tipo de gráfico es mejor para investigar la causa raíz?',
+    options:[
+      { text:'Un gráfico de Correlación (Scatter Plot) de fallos vs. temperatura, vibración y tiempo.', correct:true, reason:'Un scatter plot es ideal para encontrar relaciones y correlaciones entre variables.'},
+      { text:'Un gráfico de Torta (Pie Chart) mostrando el porcentaje de fallos de cada máquina.', correct:false, reason:'El gerente ya sabe que la Máquina 3 falla. Esto no explica el "por qué".'},
+      { text:'Un medidor (Gauge) que muestre el OEE (Eficiencia) actual.', correct:false, reason:'Un medidor muestra el estado actual (un KPI), pero no la causa raíz histórica.'},
+      { text:'Una tabla con todos los logs de fallos de la máquina.', correct:false, reason:'Una tabla de datos crudos es abrumadora y no ofrece "insights" visuales.'}
+    ]
+  },
+  {
+    id:10, role:'data',
+    title:'Desafío 5: Calidad de Datos (Datos)',
+    image:'https://images.unsplash.com/photo-1516321497487-e288fb19713f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+    text:'El modelo de IA predice fallos, pero se equivoca mucho. Descubres que los sensores reportan "Temperatura = -999" cuando fallan. ¿Qué es esto?',
+    options:[
+      { text:'Un problema de Calidad de Datos (Data Quality). El -999 está sesgando el modelo de IA.', correct:true, reason:'La IA está interpretando -999 como un valor real. Es un dato basura que debe ser limpiado.'},
+      { text:'Un problema de Ciberseguridad. Alguien está atacando los sensores.', correct:false, reason:'Es poco probable. -999 es un valor "centinela" común para indicar error, no un ataque.'},
+      { text:'Un problema del modelo de IA. Necesita un algoritmo más complejo.', correct:false, reason:'Ningún algoritmo, por complejo que sea, funcionará bien con datos basura.'},
+      { text:'Un problema de IoT. Los sensores se están congelando (-999 grados).', correct:false, reason:'-999 es un código de error, no una temperatura física real.'}
+    ]
+  },
+
+  // === ROL: AI (5 Desafíos) ===
+  {
+    id:11, role:'ai',
+    title:'Desafío 1: Falla Inminente (IA)',
+    image:'https://images.unsplash.com/photo-1581092160607-6e0c4d7a5f3f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+    text:'Tu modelo predictivo (IA) indica una falla catastrófica en el motor principal en 3 horas. ¿Qué acción debe tomar el sistema?',
+    options:[
+      { text:'Programar una parada automática y generar una orden de Mantenimiento Predictivo.', correct:true, reason:'La acción autónoma evita daños mayores y optimiza la reparación.'},
+      { text:'Enviar un email al gerente para que apruebe la parada.', correct:false, reason:'La necesidad de aprobación humana anula el propósito de la IA autónoma y añade retrasos.'},
+      { text:'Esperar 2 horas y 50 minutos para confirmar la predicción.', correct:false, reason:'Esperar hasta el último minuto aumenta el riesgo de un fallo real antes de la parada.'},
+      { text:'Reentrenar el modelo con datos nuevos para ver si la predicción cambia.', correct:false, reason:'Reentrenar toma tiempo. La predicción actual es la que debe usarse para la acción.'}
+    ]
+  },
+  {
+    id:12, role:'ai',
+    title:'Desafío 2: "Model Drift" (IA)',
+    image:'https://images.unsplash.com/photo-1507146153580-69a1fe6d8aa1?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+    text:'El modelo de IA para predecir la calidad del producto, que funcionó bien por 6 meses, ahora falla mucho. El proceso no ha cambiado. ¿Qué está pasando?',
+    options:[
+      { text:'"Model Drift" (Deriva del Modelo). El modelo debe ser re-entrenado con datos recientes.', correct:true, reason:'Los modelos de IA "envejecen" a medida que nuevos patrones sutiles emergen. Necesitan re-entrenamiento.'},
+      { text:'Los sensores están todos rotos.', correct:false, reason:'Es improbable que *todos* los sensores se rompan a la vez. El "Drift" es más común.'},
+      { text:'La IA se ha vuelto "demasiado inteligente" y se aburrió.', correct:false, reason:'La IA no tiene conciencia. Simplemente está desactualizada.'},
+      { text:'El código de la IA debe tener un bug que apareció solo.', correct:false, reason:'El código no cambia solo. Los datos sí, y el "Drift" es un problema de datos vs. modelo.'}
+    ]
+  },
+  {
+    id:13, role:'ai',
+    title:'Desafío 3: Falsos Positivos (IA)',
+    image:'https://images.unsplash.com/photo-1555421689-d68475b124f3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+    text:'Tu sistema de Visión Artificial descarta el 30% de los productos "buenos" (Falsos Positivos), deteniendo la línea. ¿Qué haces?',
+    options:[
+      { text:'Ajustar el "umbral de confianza" del modelo y re-entrenarlo con más ejemplos de productos buenos.', correct:true, reason:'El modelo está siendo demasiado sensible. Necesita más ejemplos y un ajuste de su umbral.'},
+      { text:'Apagar la Visión Artificial y volver a la inspección humana.', correct:false, reason:'Esto es un paso atrás. La IA debe ser corregida, no abandonada.'},
+      { text:'Comprar cámaras de mayor resolución.', correct:false, reason:'Puede que no sea un problema de la cámara, sino del "cerebro" (IA). Es una solución costosa.'},
+      { text:'Asumir que el 30% de los productos tenían defectos invisibles para el ojo humano.', correct:false, reason:'Es posible, pero lo más probable es que el modelo esté mal calibrado.'}
+    ]
+  },
+  {
+    id:14, role:'ai',
+    title:'Desafío 4: "Caja Negra" (IA)',
+    image:'https://images.unsplash.com/photo-1504639725590-94d0586070bd?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+    text:'Un modelo de Deep Learning detiene la producción. El gerente te pregunta "exactamente por qué". El modelo es una "Caja Negra". ¿Qué necesitas?',
+    options:[
+      { text:'Implementar técnicas de "IA Explicable" (XAI) como SHAP o LIME.', correct:true, reason:'XAI (Explainable AI) son técnicas diseñadas para interpretar y explicar las decisiones de modelos complejos.'},
+      { text:'Decirle al gerente "es complicado, confíe en las matemáticas".', correct:false, reason:'La falta de transparencia genera desconfianza y es inaceptable en decisiones críticas.'},
+      { text:'Cambiar el Deep Learning por un simple árbol de decisión (If-Then).', correct:false, reason:'Un modelo simple puede ser menos preciso. Es mejor explicar el modelo complejo.'},
+      { text:'Reiniciar el modelo, esperando que el problema desaparezca.', correct:false, reason:'Esto no resuelve la falta de explicabilidad ni garantiza que no vuelva a pasar.'}
+    ]
+  },
+  {
+    id:15, role:'ai',
+    title:'Desafío 5: Optimización de Ruta (IA)',
+    image:'https://images.unsplash.com/photo-1587572004077-4c8157eab0c9?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+    text:'Debes optimizar la ruta de 50 robots (AGV) en el almacén para evitar colisiones y maximizar entregas. ¿Qué tipo de IA es ideal para esto?',
+    options:[
+      { text:'Aprendizaje por Refuerzo (Reinforcement Learning), donde los AGV "aprenden" la mejor ruta.', correct:true, reason:'El Aprendizaje por Refuerzo es ideal para optimizar sistemas complejos con muchas variables y agentes.'},
+      { text:'Un modelo de Regresión Lineal para predecir la velocidad.', correct:false, reason:'La regresión predice un número, no optimiza un sistema de rutas complejo.'},
+      { text:'Un modelo de Clasificación para saber si el robot es "Rojo" o "Azul".', correct:false, reason:'La clasificación no tiene nada que ver con la optimización de rutas.'},
+      { text:'Usar 50 operadores humanos con joysticks para controlar los robots.', correct:false, reason:'Esto es lo opuesto a la automatización y la optimización por IA.'}
+    ]
+  },
+
+  // === ROL: Cyber (5 Desafíos) ===
+  {
+    id:16, role:'cyber',
+    title:'Desafío 1: Ataque al PLC (Ciberseguridad)',
+    image:'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+    text:'Detectas tráfico malicioso intentando acceder al PLC de la línea de ensamblaje. ¿Acción prioritaria?',
+    options:[
+      { text:'Aislar la Red OT (Industrial) de la Red IT (Corporativa) y segmentar el PLC.', correct:true, reason:'Aislar evita la propagación del ataque y protege la operación crítica (Red OT).'},
+      { text:'Apagar toda la fábrica inmediatamente.', correct:false, reason:'Es una medida drástica y costosa. El aislamiento es una respuesta más quirúrgica.'},
+      { text:'Enviar un email a todos los empleados advirtiendo del peligro.', correct:false, reason:'No es una acción técnica inmediata. El ataque seguirá ocurriendo.'},
+      { text:'Instalar un Antivirus en el PLC.', correct:false, reason:'Los PLCs generalmente no pueden ejecutar antivirus. La protección debe ser a nivel de red.'}
+    ]
+  },
+  {
+    id:17, role:'cyber',
+    title:'Desafío 2: Ransomware en la HMI (Ciberseguridad)',
+    image:'https://images.unsplash.com/photo-1563206767-004811f05503?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+    text:'Un operador reporta que la pantalla HMI (Interfaz Humano-Máquina) está bloqueada con una nota de Ransomware. ¿Qué haces?',
+    options:[
+      { text:'Desconectar la HMI de la red INMEDIATAMENTE y notificar al equipo de respuesta.', correct:true, reason:'La prioridad es evitar que el ransomware se propague a otras máquinas en la red OT.'},
+      { text:'Pagar el rescate. La producción no puede parar.', correct:false, reason:'Pagar no garantiza la recuperación y financia a los criminales. Es el último recurso.'},
+      { text:'Reiniciar la HMI, esperando que el virus desaparezca.', correct:false, reason:'El ransomware es persistente y reiniciar no lo eliminará.'},
+      { text:'Formatear el disco duro de la HMI y reinstalar el software.', correct:false, reason:'Aunque eventualmente se hará, la acción *inmediata* es desconectar de la red.'}
+    ]
+  },
+  {
+    id:18, role:'cyber',
+    title:'Desafío 3: Equipo Legacy Inseguro (Ciberseguridad)',
+    image:'https://images.unsplash.com/photo-1527599433152-87002b8d4f4d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+    text:'Una máquina crítica de 10 millones USD usa Windows XP (sin parches). No puedes actualizarla. ¿Cómo la proteges?',
+    options:[
+      { text:'Mediante "Parcheo Virtual": Aislarla en una VLAN y poner un Firewall (IPS) enfrente.', correct:true, reason:'Esto crea una "burbuja" de seguridad, filtrando ataques antes de que lleguen a la máquina vulnerable.'},
+      { text:'Conectarla a Internet para que busque actualizaciones de Windows XP.', correct:false, reason:'Windows XP ya no tiene actualizaciones. Conectarla a Internet es suicida.'},
+      { text:'Ignorarlo. Si ha funcionado 20 años, funcionará 20 más.', correct:false, reason:'La "seguridad por oscuridad" no es seguridad. Es un riesgo inmenso.'},
+      { text:'Reemplazar la máquina de 10 millones USD.', correct:false, reason:'No es una opción viable económicamente. La ciberseguridad debe habilitar el negocio.'}
+    ]
+  },
+  {
+    id:19, role:'cyber',
+    title:'Desafío 4: Phishing al Ingeniero (Ciberseguridad)',
+    image:'https://images.unsplash.com/photo-1555940024-16a3c302f37c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+    text:'Un ingeniero de planta usó su portátil de la Red IT (Oficina) en la Red OT (Fábrica) tras recibir un email de Phishing. ¿Cuál es el riesgo?',
+    options:[
+      { text:'El Malware puede "saltar" de la red IT a la red OT, paralizando la producción.', correct:true, reason:'La convergencia IT/OT es el mayor riesgo. Una red debe estar estrictamente separada de la otra.'},
+      { text:'El portátil se sobrecalentará por el polvo de la fábrica.', correct:false, reason:'Es un problema físico, no un riesgo de ciberseguridad de Phishing.'},
+      { text:'El WiFi de la fábrica es más lento que el de la oficina.', correct:false, reason:'Es un problema de rendimiento, no de seguridad crítica.'},
+      { text:'Ninguno. El antivirus del portátil lo detendrá todo.', correct:false, reason:'Confiar ciegamente en el antivirus es una mala práctica. Los ataques modernos lo evaden.'}
+    ]
+  },
+  {
+    id:20, role:'cyber',
+    title:'Desafío 5: "Zero Trust" (Ciberseguridad)',
+    image:'https://images.unsplash.com/photo-1544216717-3b5b15998943?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+    text:'El modelo de seguridad "Castillo y Foso" (Firewall externo) ya no funciona. ¿Qué nuevo modelo de seguridad debes adoptar en la Industria 4.0?',
+    options:[
+      { text:'"Zero Trust" (Confianza Cero): Nunca confiar, siempre verificar. Autenticar todo.', correct:true, reason:'Zero Trust asume que los atacantes ya están dentro. Verifica cada conexión y usuario.'},
+      { text:'"Open Trust" (Confianza Abierta): Confiar en todos los dispositivos para acelerar la producción.', correct:false, reason:'Esto es lo opuesto a la seguridad y garantiza un desastre.'},
+      { text:'"Security by Obscurity" (Seguridad por Oscuridad): Esconder los PLCs y esperar que nadie los encuentre.', correct:false, reason:'No es un modelo de seguridad real ni escalable.'},
+      { text:'"Air Gapping": Desconectar toda la fábrica de Internet permanentemente.', correct:false, reason:'Imposible en la Industria 4.0, que depende de la nube, IoT y la integración.'}
+    ]
+  }
+];
+
+/* =================== Estado del juego =================== */
+let selectedRole = null;
+let lives = 3;
+let currentIndex = 0;       
+let results = [];           
+let activeChallenges = [];  
+
+/* DOM refs */
+const intro = document.getElementById('intro');
+const rolesDiv = document.getElementById('roles');
+const challengesDiv = document.getElementById('challenges');
+const summaryDiv = document.getElementById('summaryScreen');
+const roleDisplay = document.getElementById('roleDisplay');
+const livesDisplay = document.getElementById('livesDisplay');
+const progressDisplay = document.getElementById('progressDisplay');
+const challengeTitle = document.getElementById('challengeTitle');
+const challengeImage = document.getElementById('challengeImage');
+const challengeText = document.getElementById('challengeText');
+const optionsContainer = document.getElementById('optionsContainer');
+const feedbackBox = document.getElementById('feedback');
+const feedbackText = document.getElementById('feedbackText');
+const nextBtn = document.getElementById('nextBtn');
+const summaryTitle = document.getElementById('summaryTitle');
+const summaryExplanation = document.getElementById('summaryExplanation');
+const summaryList = document.getElementById('summaryList');
+
+/* ========== Navegación inicial ========== */
+function startToRoles(){ playSound(clickSound); intro.classList.add('hidden'); rolesDiv.classList.remove('hidden'); }
+function backToIntro(){ playSound(clickSound); rolesDiv.classList.add('hidden'); intro.classList.remove('hidden'); }
+
+/* ========== Selección de rol ========== */
+function selectRole(role){
+  playSound(clickSound);
+  selectedRole = role;
+  activeChallenges = allChallenges.filter(ch => ch.role === role);
+
+  lives = 3;
+  currentIndex = 0;
+  results = [];
+  
+  rolesDiv.classList.add('hidden');
+  roleDisplay.textContent = 'Rol: ' + roleName(role);
+  updateLives(); 
+  loadChallenge(currentIndex);
+  challengesDiv.classList.remove('hidden');
+  
+  if(!musicPlaying){ toggleMusic(); }
+}
+
+function roleName(r){
+  const map = { iot:'Sensores e IoT', data:'Analistas de Datos', ai:'Inteligencia Artificial', cyber:'Ciberseguridad' };
+  return map[r] || 'General';
+}
+
+/* ========== Estado UI ========== */
+function updateLives(){
+  let hearts = '❤️'.repeat(lives) + '🖤'.repeat(3 - lives);
+  livesDisplay.textContent = 'Vidas: ' + hearts;
+  progressDisplay.textContent = `Desafío: ${currentIndex+1}/${activeChallenges.length}`;
+}
+
+/* ========== Cargar desafío actual (de la lista filtrada) ========== */
+function loadChallenge(idx){
+  feedbackBox.classList.add('hidden');
+  optionsContainer.innerHTML = '';
+  optionsContainer.style.pointerEvents = 'auto';
+
+  if(idx >= activeChallenges.length){
+    finalizeGame();
+    return;
+  }
+  
+  const ch = activeChallenges[idx];
+
+  challengeTitle.textContent = ch.title;
+  challengeImage.src = ch.image;
+  challengeImage.alt = ch.title;
+  challengeText.textContent = ch.text;
+
+  // Mezclar opciones
+  const shuffled = [...ch.options].sort(()=>Math.random() - 0.5);
+  shuffled.forEach(opt=>{
+    const div = document.createElement('div');
+    div.className = 'challenge-option';
+    div.innerHTML = opt.text;
+    div.tabIndex = 0;
+    div.addEventListener('click', ()=> answerOption(ch, opt));
+    div.addEventListener('keypress', (e)=>{ if(e.key === 'Enter') answerOption(ch,opt); });
+    optionsContainer.appendChild(div);
+  });
+
+  updateLives();
+}
+
+/* ========== Responder opción (CON LÓGICA DE FEEDBACK MEJORADA) ========== */
+let answeredThisRound = false;
+function answerOption(challenge, option){
+  if(answeredThisRound) return;
+  answeredThisRound = true;
+  optionsContainer.style.pointerEvents = 'none';
+  playSound(clickSound);
+
+  const record = { id: challenge.id, title: challenge.title, correct: !!option.correct, reason: option.reason, selectedText: option.text };
+  results.push(record);
+
+  if(option.correct){
+    playSound(successSound);
+    feedbackBox.className = 'feedback-box feedback-correct';
+    feedbackText.innerHTML = `<strong>¡Correcto!</strong> — ${option.reason}`;
+  } else {
+    playSound(errorSound);
+    lives = Math.max(0, lives - 1);
+    feedbackBox.className = 'feedback-box feedback-incorrect';
+
+    // 1. Encontrar la respuesta correcta
+    const correctOption = challenge.options.find(opt => opt.correct === true);
+    let correctReason = correctOption ? `<strong>${correctOption.text}</strong><br/>${correctOption.reason}` : "No se encontró la opción correcta.";
+
+    // 2. Mostrar ambas razones
+    feedbackText.innerHTML = `<strong>Respuesta incorrecta.</strong> ${option.reason}
+                            <hr style="border-color:rgba(255,255,255,0.1); margin:10px 0;">
+                            <strong>La respuesta correcta era:</strong><br/> ${correctReason}`;
+  }
+  
+  feedbackBox.classList.remove('hidden');
+  updateLives();
+
+  if(lives <= 0){
+    setTimeout(()=> finalizeGame(true), 1500); // Dar más tiempo para leer el feedback
+    return;
+  }
+
+  if(currentIndex >= activeChallenges.length - 1){
+    nextBtn.textContent = 'Finalizar';
+  } else {
+    nextBtn.textContent = 'Siguiente →';
+  }
+}
+
+/* ========== Avanzar al siguiente desafío ========== */
+function nextChallenge(){
+  if(!answeredThisRound) return; 
+  
+  currentIndex++;
+  answeredThisRound = false;
+
+  if(currentIndex < activeChallenges.length){
+    loadChallenge(currentIndex);
+  } else {
+    finalizeGame();
+  }
+}
+
+/* ========== Finalización y resumen inteligente ========== */
+function finalizeGame(forceFailure=false){
+  challengesDiv.classList.add('hidden');
+
+  const correctCount = results.filter(r => r.correct).length;
+  const attemptedCount = results.length;
+  const allCorrect = correctCount === activeChallenges.length && attemptedCount === activeChallenges.length;
+  const noneCorrect = correctCount === 0;
+
+  summaryTitle.textContent = '';
+  summaryExplanation.innerHTML = '';
+  summaryList.innerHTML = '';
+
+  if(allCorrect && !forceFailure){
+    summaryTitle.innerHTML = ' ¡Victoria total! — La fábrica está a salvo';
+    summaryExplanation.innerHTML = `<p>¡Excelente trabajo! Todas las decisiones para tu rol fueron acertadas.</p>
+      <h4>Conclusiones:</h4>
+      <ul>
+        <li>El mantenimiento predictivo reduce costos y daños.</li>
+        <li>La limpieza y etiquetado de datos hacen la IA confiable.</li>
+        <li>La ciberseguridad aislada y segmentada protege la disponibilidad.</li>
+        <li>Integración horizontal permite acciones coordinadas en la cadena de valor.</li>
+      </ul>`;
+  } else if(lives <= 0 || forceFailure){
+    summaryTitle.innerHTML = ' Misión fallida — Pérdida crítica';
+    summaryExplanation.innerHTML = `<p>Se agotaron las vidas o las decisiones no fueron adecuadas. Aquí están los motivos por desafío para aprender:</p>`;
+  } else {
+    summaryTitle.innerHTML = ' Resultado mixto — Revisión de decisiones';
+    summaryExplanation.innerHTML = `<p>Tu desempeño fue mixto. A continuación verás qué respuestas fueron correctas y por qué; y cuáles fallaron y su motivo.</p>`;
+  }
+
+  activeChallenges.forEach((ch, idx)=>{
+    const li = document.createElement('li');
+    const result = results.find(r => r.id === ch.id);
+    
+    if (result) {
+      li.innerHTML = `<strong>Desafío ${idx+1}:</strong> ${result.title} <br/>${result.correct ? ' Correcta' : ' Incorrecta'} - ${result.reason}`;
+      li.style.borderLeft = result.correct ? `4px solid ${getComputedStyle(document.documentElement).getPropertyValue('--primary') || '#00ffcc'}` : `4px solid ${'#ff6b6b'}`;
+    } else {
+      // Esto solo debería pasar si el juego termina antes (ej. sin vidas)
+      li.innerHTML = `<strong>Desafío ${idx+1}:</strong> ${ch.title} <br/> No intentado (sin respuesta)`;
+      li.style.borderLeft = `4px solid #999`;
+    }
+    summaryList.appendChild(li);
+  });
+  
+  summaryDiv.classList.remove('hidden');
+
+  try{ bgMusic.pause(); musicPlaying = false; document.getElementById('musicIcon').className='fas fa-volume-mute'; } catch(e){}
+}
+
+/* ========== Reinicio y navegación auxiliar ========== */
+function restartAll(){
+  selectedRole = null;
+  lives = 3;
+  currentIndex = 0;
+  results = [];
+  activeChallenges = []; 
+  summaryDiv.classList.add('hidden');
+  intro.classList.remove('hidden');
+}
+
+function goToRoles(){
+  summaryDiv.classList.add('hidden');
+  rolesDiv.classList.remove('hidden');
+  selectedRole = null;
+  lives = 3;
+  currentIndex = 0;
+  results = [];
+  activeChallenges = []; 
+}
+
+/* ========== Inicio por defecto =========== */
+(function init(){
+  // intro visible por defecto
+})();
+</script>
+</body>
+</html>
